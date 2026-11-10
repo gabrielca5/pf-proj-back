@@ -1,0 +1,9 @@
+# Postgres para rodar o back na sua maquina: docker compose up -d
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: pf
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
