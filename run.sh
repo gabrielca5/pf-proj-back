@@ -45,8 +45,14 @@ case "$1" in
   ssh)
     ssh_aws ssh
     ;;
+  disk)
+    ssh_aws disk "df -h / && sudo docker system df"
+    ;;
+  prune)
+    ssh_aws prune "sudo docker system prune -af && df -h /"
+    ;;
   reset-db)
-    ssh_aws reset-db "sudo docker rm -f postgres pf-back; sudo docker volume rm pgdata"
+    ssh_aws reset-db "sudo docker rm -f pf-db pf-back; sudo docker volume rm pf-pgdata"
     echo "Rode 'bash run.sh deploy' para recriar tudo."
     ;;
   *)
@@ -58,6 +64,8 @@ case "$1" in
     echo "  check                    testa o back local e o da AWS (esperado: 401)"
     echo "  logs <chave.pem>         logs do back na AWS"
     echo "  ssh <chave.pem>          abre um terminal na AWS"
+    echo "  disk <chave.pem>         mostra o espaco em disco da AWS"
+    echo "  prune <chave.pem>        apaga imagens e containers parados do Docker na AWS"
     echo "  reset-db <chave.pem>     apaga o banco da AWS (use se mudar campos)"
     ;;
 esac

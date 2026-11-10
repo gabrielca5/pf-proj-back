@@ -43,7 +43,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo docker network create rede || true
-            sudo docker start postgres || sudo docker run -d --name postgres --network rede --restart unless-stopped -e POSTGRES_DB=pf -e POSTGRES_PASSWORD=postgres -v pgdata:/var/lib/postgresql/data postgres:17
+            sudo docker start pf-db || sudo docker run -d --name pf-db --network rede --restart unless-stopped -e POSTGRES_DB=pf -e POSTGRES_PASSWORD=postgres -v pf-pgdata:/var/lib/postgresql/data postgres:17
+            sleep 8
             sudo docker pull ${{ env.IMAGE }}
             sudo docker rm -f pf-back || true
-            sudo docker run -d --name pf-back --network rede --restart unless-stopped -p 8080:8080 -e DB_URL=jdbc:postgresql://postgres:5432/pf ${{ env.IMAGE }}
+            sudo docker run -d --name pf-back --network rede --restart unless-stopped -p 8080:8080 -e DB_URL=jdbc:postgresql://pf-db:5432/pf ${{ env.IMAGE }}

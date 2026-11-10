@@ -77,7 +77,7 @@ Em **Settings > Secrets and variables > Actions** do repositório:
 | `HOST` | `3.236.181.241` |
 | `SSH_KEY` | conteúdo inteiro do `.pem` |
 
-Todo push na `main` faz o build, roda os testes e publica na máquina. O Postgres sobe sozinho no primeiro deploy.
+Todo push na `main` faz o build, roda os testes e publica na máquina. O Postgres (container `pf-db`) sobe sozinho no primeiro deploy.
 
 Se o IP da máquina mudar, atualize o secret `HOST` e o `vercel.json` do front.
 
@@ -114,7 +114,7 @@ Exemplo: o enunciado pede `Tarefa` em `/tarefas`.
 Se mudar o nome de um campo e o banco reclamar de coluna antiga, apague o volume na máquina:
 
 ```bash
-sudo docker rm -f postgres pf-back && sudo docker volume rm pgdata
+sudo docker rm -f pf-db pf-back && sudo docker volume rm pf-pgdata
 ```
 
 e rode o deploy de novo.
