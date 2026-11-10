@@ -1,5 +1,7 @@
 # pf-proj-back
 
+**Para a prova: veja o [COMO_MEXER.md](COMO_MEXER.md).**
+
 API de avaliações. Spring Boot (Java 25, Maven), Postgres, Auth0, deploy na AWS via GitHub Actions.
 
 | Rota | Quem pode |
