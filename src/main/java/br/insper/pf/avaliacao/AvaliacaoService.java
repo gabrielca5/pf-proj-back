@@ -19,11 +19,15 @@ public class AvaliacaoService {
     }
 
     public Avaliacao cadastrar(Avaliacao avaliacao, String emailAvaliador) {
+        avaliacao.setComentarios(avaliacao.getComentarios());
         avaliacao.setId(null);
-        avaliacao.setEmailAvaliador(emailAvaliador);
+        avaliacao.setTitulo(avaliacao.getTitulo());
+        avaliacao.setPrioridade(avaliacao.getPrioridade());
+        avaliacao.setNota(avaliacao.getNota());
+        avaliacao.setEmail(emailAvaliador);
         avaliacao.setDataAvaliacao(LocalDateTime.now());
         Avaliacao salva = repository.save(avaliacao);
-        produtor.enviar("Nova avaliacao: " + salva.getEmailAvaliado() + " nota " + salva.getNota());
+        produtor.enviar("Nova avaliacao: " + salva.getEmail() + " nota " + salva.getNota());
         return salva;
     }
 

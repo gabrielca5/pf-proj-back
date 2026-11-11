@@ -23,14 +23,13 @@ public class Avaliacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // preenchido pelo back com o email de quem esta logado
-    private String emailAvaliador;
 
     @NotBlank
     @Email
-    private String emailAvaliado;
-
+    private String email;
+    private String titulo;
     private String comentarios;
+    private String prioridade;
 
     @NotNull
     @Min(0)

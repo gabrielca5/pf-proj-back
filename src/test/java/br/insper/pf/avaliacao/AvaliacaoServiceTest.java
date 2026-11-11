@@ -30,13 +30,13 @@ class AvaliacaoServiceTest {
     @Test
     void cadastrarPreencheAvaliadorEData() {
         Avaliacao avaliacao = new Avaliacao();
-        avaliacao.setEmailAvaliado("avaliado@empresa.com");
+        avaliacao.setEmail("avaliado@empresa.com");
         avaliacao.setNota(8);
         when(repository.save(avaliacao)).thenReturn(avaliacao);
 
         Avaliacao salva = service.cadastrar(avaliacao, "admin@empresa.com");
 
-        assertEquals("admin@empresa.com", salva.getEmailAvaliador());
+        assertEquals("admin@empresa.com", salva.getEmail());
         assertNotNull(salva.getDataAvaliacao());
         verify(produtor).enviar(anyString());
     }
