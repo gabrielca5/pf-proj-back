@@ -17,17 +17,21 @@ public class AvaliacaoService {
         this.produtor = produtor;
 
     }
-
-    public Avaliacao cadastrar(Avaliacao avaliacao, String emailAvaliador, String emailAvaliado, String titulo, String comentarios, String prioridade, Integer nota) {
-        avaliacao.setComentarios(comentarios);
+// [ERROR: column "email" of relation "avaliacao" contains null values]
+    public Avaliacao cadastrar(Avaliacao avaliacao,
+         String emailAvaliador, String emailAvaliado,
+          String titulo, String descricao,
+           String prioridade
+            ) {
+        avaliacao.setEmail(emailAvaliado);
+        avaliacao.setDescricao(descricao);
         avaliacao.setId(null);
         avaliacao.setTitulo(titulo);
         avaliacao.setPrioridade(prioridade);
-        avaliacao.setNota(nota);
         avaliacao.setEmail(emailAvaliador);
         avaliacao.setDataAvaliacao(LocalDateTime.now());
         Avaliacao salva = repository.save(avaliacao);
-        produtor.enviar("Nova avaliacao: " + salva.getEmail() + " nota " + salva.getNota());
+        // produtor.enviar("Nova avaliacao: " + salva.getEmail() + " nota " + salva.getNota());
         return salva;
     }
 

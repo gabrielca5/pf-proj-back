@@ -30,15 +30,14 @@ public class Avaliacao {
 
     @NotBlank
     private String titulo;
+
     @NotBlank
-    private String comentarios;
+    private String descricao;
+
     @NotBlank
     private String prioridade;
 
-    @NotNull
-    @Min(0)
-    @Max(10)
-    private Integer nota;
+
 
     // preenchido pelo back
     private LocalDateTime dataAvaliacao;
