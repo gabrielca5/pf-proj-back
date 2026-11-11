@@ -33,13 +33,61 @@ O deploy leva uns 2 a 4 minutos. O teste de cada mudança roda no deploy: se um 
 3. Front: campo no form e na tabela.
 O `ddl-auto=update` cria a coluna sozinho.
 
-### Mudar quem pode acessar uma rota
-No `@PreAuthorize` da rota:
+### Definir a role de uma rota
+
+A regra fica em cima do metodo no controller, com `@PreAuthorize`:
 ```java
-@PreAuthorize("hasRole('ADMIN')")                  // so ADMIN
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")       // os dois
-// sem a linha: qualquer usuario logado
+@GetMapping
+@PreAuthorize("hasRole('ADMIN')")
+public List<Avaliacao> listar() { ... }
 ```
+
+| Quero | Escrevo |
+|---|---|
+| So ADMIN | `@PreAuthorize("hasRole('ADMIN')")` |
+| So USER | `@PreAuthorize("hasRole('USER')")` |
+| ADMIN ou USER | `@PreAuthorize("hasAnyRole('ADMIN', 'USER')")` |
+| Qualquer usuario logado | nao escrever `@PreAuthorize` (o `SecurityConfig` ja exige token) |
+| Rota publica, sem login | ver "Rota publica" abaixo |
+
+Regras que evitam erro:
+- Escreva o nome da role **sem** `ROLE_`: `hasRole('ADMIN')`, nunca `hasRole('ROLE_ADMIN')`. O prefixo e colocado pelo `SecurityConfig`.
+- O nome tem que ser igual ao da role criada no Auth0, em maiusculas.
+- Uma rota por metodo: cada `@GetMapping`, `@PostMapping`, etc. tem o seu `@PreAuthorize`.
+- Para a mesma regra em todas as rotas do controller, ponha o `@PreAuthorize` em cima da classe. O que estiver no metodo vence o da classe.
+
+Como a role chega ate la (para entender se algo der 403):
+1. A role e atribuida ao usuario no Auth0 (User Management, Users, aba Roles).
+2. No login, a Action `roles` coloca a lista no token, no claim `https://pf/roles`.
+3. O `SecurityConfig` le esse claim e transforma `ADMIN` em `ROLE_ADMIN`.
+4. O `@PreAuthorize("hasRole('ADMIN')")` compara com isso.
+Usuario sem a role chama a rota e recebe **403**. Sem token, **401**.
+
+Comportamento diferente por role na mesma rota (ex: ADMIN ve tudo, USER so as suas):
+```java
+@GetMapping
+@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+public List<Avaliacao> listar(@AuthenticationPrincipal Jwt jwt) {
+    String email = jwt.getClaimAsString(SecurityConfig.CLAIM_EMAIL);
+    List<String> roles = jwt.getClaimAsStringList(SecurityConfig.CLAIM_ROLES);
+    boolean admin = roles != null && roles.contains("ADMIN");
+    return admin ? service.listar() : service.listarDoAvaliador(email);
+}
+```
+(`listarDoAvaliador` esta na receita de rota nova, logo abaixo.)
+
+Rota publica (sem login): no `SecurityConfig`, antes do `anyRequest`:
+```java
+.authorizeHttpRequests(auth -> auth
+        .requestMatchers("/publico/**").permitAll()
+        .anyRequest().authenticated())
+```
+
+Alternativa por URL, tambem no `SecurityConfig` (use so se o enunciado pedir regra central):
+```java
+.requestMatchers(HttpMethod.POST, "/avaliacoes").hasRole("ADMIN")
+```
+Import: `org.springframework.http.HttpMethod`. Essas linhas tambem vem antes do `anyRequest`.
 
 ### Rota nova: listar so as do usuario logado
 Repository:
