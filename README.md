@@ -18,6 +18,7 @@ API de avaliações. Spring Boot (Java 25, Maven), Postgres, Auth0, deploy na AW
 | `avaliacao/AvaliacaoService.java` | regra de negócio (preenche avaliador e data) |
 | `avaliacao/AvaliacaoRepository.java` | acesso ao banco |
 | `generico/` | modelo com CRUD completo em `/itens` (ver seção 7) |
+| `fila/` | RabbitMQ: fila, produtor e consumidor (ver `COMO_MEXER.md`) |
 | `SecurityConfig.java` | exige token em tudo e lê as roles do token |
 | `application.properties` | banco e Auth0 |
 | `.github/workflows/deploy.yml` | build, imagem no Docker Hub, deploy por SSH |
@@ -50,7 +51,7 @@ exports.onExecutePostLogin = async (event, api) => {
 ## 2. Rodar local
 
 ```bash
-docker compose up -d     # sobe o Postgres
+docker compose up -d     # sobe o Postgres e o RabbitMQ (painel em http://localhost:15672, pf / pf)
 mvn spring-boot:run      # back em http://localhost:8080
 ```
 

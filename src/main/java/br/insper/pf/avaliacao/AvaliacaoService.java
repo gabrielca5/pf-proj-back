@@ -1,5 +1,6 @@
 package br.insper.pf.avaliacao;
 
+import br.insper.pf.fila.Produtor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -9,16 +10,20 @@ import java.util.List;
 public class AvaliacaoService {
 
     private final AvaliacaoRepository repository;
+    private final Produtor produtor;
 
-    public AvaliacaoService(AvaliacaoRepository repository) {
+    public AvaliacaoService(AvaliacaoRepository repository, Produtor produtor) {
         this.repository = repository;
+        this.produtor = produtor;
     }
 
     public Avaliacao cadastrar(Avaliacao avaliacao, String emailAvaliador) {
         avaliacao.setId(null);
         avaliacao.setEmailAvaliador(emailAvaliador);
         avaliacao.setDataAvaliacao(LocalDateTime.now());
-        return repository.save(avaliacao);
+        Avaliacao salva = repository.save(avaliacao);
+        produtor.enviar("Nova avaliacao: " + salva.getEmailAvaliado() + " nota " + salva.getNota());
+        return salva;
     }
 
     public List<Avaliacao> listar() {

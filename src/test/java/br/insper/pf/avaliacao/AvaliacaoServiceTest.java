@@ -1,5 +1,6 @@
 package br.insper.pf.avaliacao;
 
+import br.insper.pf.fila.Produtor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -17,6 +20,9 @@ class AvaliacaoServiceTest {
 
     @Mock
     private AvaliacaoRepository repository;
+
+    @Mock
+    private Produtor produtor;
 
     @InjectMocks
     private AvaliacaoService service;
@@ -32,6 +38,7 @@ class AvaliacaoServiceTest {
 
         assertEquals("admin@empresa.com", salva.getEmailAvaliador());
         assertNotNull(salva.getDataAvaliacao());
+        verify(produtor).enviar(anyString());
     }
 
     @Test

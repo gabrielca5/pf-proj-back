@@ -1,4 +1,4 @@
-# Postgres para rodar o back na sua maquina: docker compose up -d
+# Postgres e RabbitMQ para rodar o back na sua maquina: docker compose up -d
 services:
   postgres:
     image: postgres:17
@@ -7,3 +7,11 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: pf
+      RABBITMQ_DEFAULT_PASS: pf
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # painel: http://localhost:15672 (pf / pf)

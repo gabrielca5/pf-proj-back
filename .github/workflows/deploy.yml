@@ -44,7 +44,8 @@ jobs:
           script: |
             sudo docker network create rede || true
             sudo docker start pf-db || sudo docker run -d --name pf-db --network rede --restart unless-stopped -e POSTGRES_DB=pf -e POSTGRES_PASSWORD=postgres -v pf-pgdata:/var/lib/postgresql/data postgres:17
-            sleep 8
+            sudo docker start pf-rabbit || sudo docker run -d --name pf-rabbit --network rede --restart unless-stopped -e RABBITMQ_DEFAULT_USER=pf -e RABBITMQ_DEFAULT_PASS=pf rabbitmq:3-management-alpine
+            sleep 12
             sudo docker pull ${{ env.IMAGE }}
             sudo docker rm -f pf-back || true
-            sudo docker run -d --name pf-back --network rede --restart unless-stopped -p 8080:8080 -e DB_URL=jdbc:postgresql://pf-db:5432/pf ${{ env.IMAGE }}
+            sudo docker run -d --name pf-back --network rede --restart unless-stopped -p 8080:8080 -e DB_URL=jdbc:postgresql://pf-db:5432/pf -e RABBIT_HOST=pf-rabbit ${{ env.IMAGE }}

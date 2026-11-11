@@ -15,6 +15,7 @@ O deploy leva uns 2 a 4 minutos. O teste de cada mudança roda no deploy: se um 
 | `application.properties` | quase nunca (banco e Auth0 já estão certos) |
 | `src/test/.../AvaliacaoServiceTest.java` | sempre que mudar o service ou os campos |
 | `generico/` | modelo pronto com CRUD completo (`/itens`) para copiar |
+| `fila/` | RabbitMQ: `FilaConfig` (fila), `Produtor` (envia), `Consumidor` (recebe) |
 
 ## Receitas
 
@@ -131,6 +132,55 @@ Nada mais, a Action ja manda qualquer role no token.
 ### Teste novo
 Copie um teste do `AvaliacaoServiceTest`. Padrao: `when(repository.metodo(...)).thenReturn(...)`, chama o service, `assertEquals(esperado, real)`.
 Para esperar erro: `assertThrows(ResponseStatusException.class, () -> service.cadastrar(...))`.
+
+### Fila (RabbitMQ)
+
+Tres pecas na pasta `fila/`:
+- `FilaConfig`: declara a fila `avaliacoes`.
+- `Produtor`: envia. Uso: `produtor.enviar("texto")`.
+- `Consumidor`: recebe. O metodo com `@RabbitListener(queues = FilaConfig.FILA)` roda sozinho a cada mensagem.
+
+Hoje: ao cadastrar uma avaliacao, o service envia uma mensagem e o consumidor imprime no log (`Mensagem recebida: ...`).
+
+Ver funcionando:
+- Local: `bash run.sh db` sobe Postgres e RabbitMQ. Painel em http://localhost:15672 (usuario `pf`, senha `pf`), aba Queues.
+- AWS: `bash run.sh logs ../projsoft26b.pem` e procure `Mensagem recebida`.
+
+**Enviar em outro ponto** (ex: ao excluir): injete o `Produtor` no construtor do service e chame `produtor.enviar("...")`. No teste desse service, adicione `@Mock private Produtor produtor;` senao o teste quebra.
+
+**Mudar o que o consumidor faz**: edite o corpo do `receber`. Para salvar no banco ou chamar um service, injete ele no construtor do `Consumidor`.
+
+**Mudar a mensagem**: e so o texto passado ao `enviar` (no `AvaliacaoService`).
+
+**Segunda fila**: em `FilaConfig`, uma constante e um bean:
+```java
+public static final String OUTRA = "outra";
+
+@Bean
+public Queue outra() {
+    return new Queue(OUTRA, true);
+}
+```
+No `Produtor`, um metodo `convertAndSend(FilaConfig.OUTRA, mensagem)`. No `Consumidor`, outro metodo com `@RabbitListener(queues = FilaConfig.OUTRA)`. Use sempre a constante, nunca o texto da fila escrito a mao nos dois lados.
+
+**Enviar um objeto em vez de texto** (JSON): em `FilaConfig`, o conversor:
+```java
+@Bean
+public MessageConverter conversor() {
+    return new Jackson2JsonMessageConverter();
+}
+```
+Imports: `org.springframework.amqp.support.converter.MessageConverter` e `org.springframework.amqp.support.converter.Jackson2JsonMessageConverter`.
+Depois troque `String` por `Object` no `enviar` do `Produtor` e pela classe da mensagem no metodo `receber`. A classe precisa de getters e construtor vazio (ou ser um `record`).
+
+Erros da fila:
+
+| Sintoma | Causa |
+|---|---|
+| `Connection refused` na porta 5672 | RabbitMQ fora do ar: local `bash run.sh db`; na AWS `sudo docker ps` mostra o `pf-rabbit`? |
+| `ACCESS_REFUSED` | usuario ou senha: o Rabbit usa `pf` / `pf` (o `guest` so funciona de dentro da propria maquina) |
+| Mensagem enviada e nada no log | nome da fila diferente entre produtor e consumidor: use a constante |
+| Fila nao aparece no painel | ela so e criada quando o back conecta |
 
 ## Comandos (rodar na pasta do back)
 
