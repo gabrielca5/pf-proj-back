@@ -27,8 +27,12 @@ public class Avaliacao {
     @NotBlank
     @Email
     private String email;
+
+    @NotBlank
     private String titulo;
+    @NotBlank
     private String comentarios;
+    @NotBlank
     private String prioridade;
 
     @NotNull
