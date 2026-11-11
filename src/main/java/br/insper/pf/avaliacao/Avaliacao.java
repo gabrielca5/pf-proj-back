@@ -36,9 +36,6 @@ public class Avaliacao {
     @NotBlank
     private String prioridade;
 
-    @NotNull
-    private Boolean deletado;
-
 
     // preenchido pelo back
     private LocalDateTime dataAvaliacao;
