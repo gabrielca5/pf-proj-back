@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,5 +38,11 @@ public class AvaliacaoController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<Avaliacao> listar() {
         return service.listar();
+    }
+
+    @DeleteMapping
+    @PreAuthorize ("hasRole('ADMIN')")
+    public Avaliacao deletar(@RequestBody Avaliacao avaliacao) {
+        return service.deletar(avaliacao.getId());
     }
 }

@@ -45,6 +45,10 @@ public class ItemController {
         return service.listarDoUsuario(jwt.getClaimAsString(SecurityConfig.CLAIM_EMAIL));
     }
 
+
+
+
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Item buscar(@PathVariable Integer id) {

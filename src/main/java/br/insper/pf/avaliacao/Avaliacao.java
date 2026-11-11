@@ -36,6 +36,8 @@ public class Avaliacao {
     @NotBlank
     private String prioridade;
 
+    @NotBlank
+    private boolean deletado;
 
 
     // preenchido pelo back

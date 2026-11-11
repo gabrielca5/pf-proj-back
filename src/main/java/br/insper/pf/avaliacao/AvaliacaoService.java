@@ -30,11 +30,17 @@ public class AvaliacaoService {
         avaliacao.setPrioridade(prioridade);
         avaliacao.setEmail(emailAvaliador);
         avaliacao.setDataAvaliacao(LocalDateTime.now());
+        avaliacao.setDeletado(false);
         Avaliacao salva = repository.save(avaliacao);
         // produtor.enviar("Nova avaliacao: " + salva.getEmail() + " nota " + salva.getNota());
         return salva;
     }
 
+    public Avaliacao deletar(Integer id) {
+        Avaliacao avaliacao = repository.findById(id).orElseThrow();
+        avaliacao.setDeletado(true);
+        return repository.save(avaliacao);
+    }
     public List<Avaliacao> listar() {
         return repository.findAll();
     }
