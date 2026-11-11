@@ -34,7 +34,7 @@ class AvaliacaoServiceTest {
         avaliacao.setNota(8);
         when(repository.save(avaliacao)).thenReturn(avaliacao);
 
-        Avaliacao salva = service.cadastrar(avaliacao, "admin@empresa.com");
+        Avaliacao salva = service.cadastrar(avaliacao, "admin@empresa.com", "avaliado@empresa.com", "Título", "Comentários", "Prioridade", 8);
 
         assertEquals("admin@empresa.com", salva.getEmail());
         assertNotNull(salva.getDataAvaliacao());

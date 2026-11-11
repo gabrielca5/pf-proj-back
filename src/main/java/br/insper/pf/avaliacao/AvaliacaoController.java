@@ -30,7 +30,7 @@ public class AvaliacaoController {
     @PreAuthorize("hasRole('ADMIN')")
     public Avaliacao cadastrar(@Valid @RequestBody Avaliacao avaliacao, @AuthenticationPrincipal Jwt jwt) {
         String email = jwt.getClaimAsString(SecurityConfig.CLAIM_EMAIL);
-        return service.cadastrar(avaliacao, email);
+        return service.cadastrar(avaliacao, email, avaliacao.getEmail(), avaliacao.getTitulo(), avaliacao.getComentarios(), avaliacao.getPrioridade(), avaliacao.getNota());
     }
 
     @GetMapping

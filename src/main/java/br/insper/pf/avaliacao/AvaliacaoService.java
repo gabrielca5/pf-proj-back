@@ -18,12 +18,12 @@ public class AvaliacaoService {
 
     }
 
-    public Avaliacao cadastrar(Avaliacao avaliacao, String emailAvaliador) {
-        avaliacao.setComentarios(avaliacao.getComentarios());
+    public Avaliacao cadastrar(Avaliacao avaliacao, String emailAvaliador, String emailAvaliado, String titulo, String comentarios, String prioridade, Integer nota) {
+        avaliacao.setComentarios(comentarios);
         avaliacao.setId(null);
-        avaliacao.setTitulo(avaliacao.getTitulo());
-        avaliacao.setPrioridade(avaliacao.getPrioridade());
-        avaliacao.setNota(avaliacao.getNota());
+        avaliacao.setTitulo(titulo);
+        avaliacao.setPrioridade(prioridade);
+        avaliacao.setNota(nota);
         avaliacao.setEmail(emailAvaliador);
         avaliacao.setDataAvaliacao(LocalDateTime.now());
         Avaliacao salva = repository.save(avaliacao);
