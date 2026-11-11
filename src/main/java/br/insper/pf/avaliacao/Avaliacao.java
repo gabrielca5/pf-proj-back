@@ -24,7 +24,6 @@ public class Avaliacao {
     private Integer id;
 
 
-    @NotBlank
     @Email
     private String email;
 
