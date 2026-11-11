@@ -15,6 +15,7 @@ public class AvaliacaoService {
     public AvaliacaoService(AvaliacaoRepository repository, Produtor produtor) {
         this.repository = repository;
         this.produtor = produtor;
+
     }
 
     public Avaliacao cadastrar(Avaliacao avaliacao, String emailAvaliador) {
